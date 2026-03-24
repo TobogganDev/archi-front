@@ -1,6 +1,3 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "@/app/router";
-
-export function Providers() {
-	return <RouterProvider router={router} />;
-}
+export { AuthProvider } from "./AuthProvider";
+export { default as QueryProvider } from "./QueryProvider";
+export { useAuthContext } from "./auth-context";
