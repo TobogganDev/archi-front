@@ -1,18 +1,19 @@
 import type { MouseEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/features/auth/model/store";
+import { useAuthContext } from "@/app/providers";
+import { useLogout } from "@/features/auth";
 
 const PROTECTED_LINKS = [
 	{ to: "/dashboard", label: "Dashboard" },
 	{ to: "/customers", label: "Clients" },
 	{ to: "/programs", label: "Programmes" },
-	{ to: "/profile", label: "Profil" },
+	{ to: "/settings", label: "Profil" },
 ] as const;
 
 export function Header() {
 	const navigate = useNavigate();
-	const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-	const setAuthenticated = useAuthStore((s) => s.setAuthenticated);
+	const { isAuthenticated } = useAuthContext();
+	const { logout, isPending } = useLogout();
 
 	const handleProtectedClick = (e: MouseEvent<HTMLAnchorElement>) => {
 		if (!isAuthenticated) {
@@ -35,7 +36,7 @@ export function Header() {
 					</Link>
 				))}
 				{isAuthenticated ? (
-					<button onClick={() => setAuthenticated(false)}>
+					<button onClick={() => logout()} disabled={isPending}>
 						Déconnexion
 					</button>
 				) : (
