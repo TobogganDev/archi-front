@@ -7,14 +7,18 @@ import { CustomersPage } from "@/pages/customers/ui/CustomersPage";
 import { CustomerDetailPage } from "@/pages/customer-detail/ui/CustomerDetailPage";
 import { ProgramsPage } from "@/pages/programs/ui/ProgramsPage";
 import { ProfilePage } from "@/pages/profile/ui/ProfilePage";
+import { Sidebar } from "@/widgets/sidebar";
 
 function ProtectedRoute() {
 	const { isAuthenticated, isLoading } = useAuthContext();
 
 	if (isLoading) {
 		return (
-			<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-				Chargement...
+			<div className="flex min-h-screen items-center justify-center bg-cream">
+				<div className="flex flex-col items-center gap-4">
+					<div className="h-8 w-8 animate-spin rounded-full border-4 border-orange border-t-transparent" />
+					<span className="text-brown/70">Chargement...</span>
+				</div>
 			</div>
 		);
 	}
@@ -23,7 +27,14 @@ function ProtectedRoute() {
 		return <Navigate to="/auth" replace />;
 	}
 
-	return <Outlet />;
+	return (
+		<div className="min-h-screen bg-cream">
+			<Sidebar />
+			<main className="ml-64 min-h-screen p-8">
+				<Outlet />
+			</main>
+		</div>
+	);
 }
 
 export const router = createBrowserRouter([

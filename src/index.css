@@ -1,1 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+
+@theme {
+    /* Couleurs principales */
+    --color-orange: #FF3B00;
+    --color-orange-light: #FF5C2A;
+    --color-orange-dark: #E03500;
+    --color-brown: #1A1008;
+    --color-brown-light: #2D1C12;
+    --color-cream: #F0E6D1;
+    --color-cream-dark: #E5D9C0;
+
+    /* Couleurs utilitaires */
+    --color-success: #22C55E;
+    --color-error: #EF4444;
+    --color-warning: #F59E0B;
+
+    /* Typographie */
+    --font-family-base: 'Inter Tight', system-ui, sans-serif;
+
+    /* Espacements */
+    --spacing-page: 2rem;
+    --spacing-section: 1.5rem;
+
+    /* Bordures */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-full: 9999px;
+
+    /* Ombres */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* Sidebar */
+    --sidebar-width: 16rem;
+}
+
+/* Reset et styles de base */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: var(--font-family-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    margin: 0;
+    background-color: var(--color-cream);
+    color: var(--color-brown);
+    min-height: 100vh;
+}
+
+/* Focus visible global */
+:focus-visible {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 2px;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-cream-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-brown);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brown-light);
+}
