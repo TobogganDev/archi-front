@@ -18,8 +18,8 @@ export function WalletPage() {
   const { data: stamps = [] } = useStampsByCustomer(customerId ?? '');
   const { data: programs = [] } = usePrograms(customer?.merchant_id ?? '');
 
-  const passUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-pass?customerId=${customerId}`;
   const walletUrl = `${window.location.origin}/wallet/${customerId}`;
+  const passUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-pass?customerId=${customerId}&walletUrl=${encodeURIComponent(walletUrl)}`;
   const platform = detectPlatform();
 
   if (isLoading) {
@@ -89,8 +89,20 @@ export function WalletPage() {
         )}
 
         {platform === 'other' && (
-          <div className="rounded-xl bg-brown/5 px-5 py-4 text-center text-sm text-brown/60">
-            Ouvrez ce lien depuis votre iPhone ou Android pour ajouter la carte à votre wallet.
+          <div className="flex flex-col gap-3">
+            <a
+              href={passUrl}
+              download
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-5 py-4 font-medium text-brown shadow-sm ring-2 ring-brown/10 transition-transform active:scale-95"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Télécharger le .pkpass
+            </a>
+            <p className="text-center text-xs text-brown/40">
+              Double-cliquez sur le fichier pour le prévisualiser (Mac) ou ouvrez-le sur iPhone.
+            </p>
           </div>
         )}
 
