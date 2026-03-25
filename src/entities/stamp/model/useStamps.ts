@@ -1,10 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { getStampsByCustomer, getActiveStampsCount, getStampStatsByMerchant } from '../api/stamp.api';
+import { getStampsByCustomer, getActiveStampsCount, getStampsByMerchant, getStampStatsByMerchant } from '../api/stamp.api';
 
 export function useStampsByCustomer(customerId: string) {
   return useQuery({
     queryKey: ['stamps', customerId],
     queryFn: () => getStampsByCustomer(customerId),
+  });
+}
+
+export function useStampsByMerchant(merchantId: string) {
+  return useQuery({
+    queryKey: ['stamps', 'merchant', merchantId],
+    queryFn: () => getStampsByMerchant(merchantId),
   });
 }
 

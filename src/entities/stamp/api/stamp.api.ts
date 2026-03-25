@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/api';
-import type { Stamp, StampInsert, StampWithProgram, CustomerStampStat } from '../model/stamp.types';
+import type { Stamp, StampInsert, StampWithProgram, StampWithRelations, CustomerStampStat } from '../model/stamp.types';
 
 export async function getStampsByCustomer(customerId: string): Promise<StampWithProgram[]> {
   const { data, error } = await supabase
@@ -10,6 +10,18 @@ export async function getStampsByCustomer(customerId: string): Promise<StampWith
   if (error) throw new Error(error.message);
 
   return data as StampWithProgram[];
+}
+
+export async function getStampsByMerchant(merchantId: string): Promise<StampWithRelations[]> {
+  const { data, error } = await supabase
+    .from('stamps')
+    .select('*, customer:customers(id, name), program:programs(*)')
+    .eq('merchant_id', merchantId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return data as StampWithRelations[];
 }
 
 export async function addStamp(data: StampInsert): Promise<Stamp> {
