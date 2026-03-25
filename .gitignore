@@ -30,3 +30,6 @@ CLAUDE.md
 # Environment variables
 .env
 .env.local
+
+supabase/.temp
+supabase/config.toml
