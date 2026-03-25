@@ -72,7 +72,7 @@ export function CustomerScanner({ onScan, onError }: Props) {
   return (
     <div className="overflow-hidden rounded-2xl bg-black">
       {/* html5-qrcode */}
-      <div id={SCANNER_ELEMENT_ID} className="w-full" />
+      <div id={SCANNER_ELEMENT_ID} className="w-full [&_video]:[-webkit-transform:scaleX(-1)] [&_video]:transform-[scaleX(-1)]" />
     </div>
   );
 }

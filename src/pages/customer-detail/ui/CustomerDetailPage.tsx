@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { useCustomerById } from "@/entities/customer";
@@ -55,6 +56,7 @@ function ProgramProgress({ program, stamps }: { program: Program; stamps: StampW
 }
 
 export function CustomerDetailPage() {
+	const [qrModalOpen, setQrModalOpen] = useState(false);
 	const { id } = useParams<{ id: string }>();
 	const { data: customer, isLoading: loadingCustomer, isError } = useCustomerById(id ?? "");
 	const { data: stamps = [], isLoading: loadingStamps } = useStampsByCustomer(id ?? "");
@@ -129,12 +131,12 @@ export function CustomerDetailPage() {
 					</div>
 				</div>
 
-				<div className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-sm">
+				<button type="button" onClick={() => setQrModalOpen(true)} className="flex cursor-pointer flex-col items-center rounded-2xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
 					<div className="rounded-xl bg-cream p-3">
 						<QRCodeSVG value={`${window.location.origin}/wallet/${customer.id}`} size={120} fgColor="#1A1008" bgColor="#F0E6D1" level="M" />
 					</div>
-					<p className="mt-2 text-center text-xs text-brown/40">QR code fidélité</p>
-				</div>
+					<p className="mt-2 text-center text-xs text-brown/40">Cliquez pour agrandir</p>
+				</button>
 			</div>
 
 			<div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -205,6 +207,27 @@ export function CustomerDetailPage() {
 					</div>
 				)}
 			</div>
+
+			{qrModalOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setQrModalOpen(false)}>
+					<div className="relative mx-4 flex flex-col items-center rounded-2xl bg-white p-8 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+						<button
+							type="button"
+							onClick={() => setQrModalOpen(false)}
+							className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-brown/40 transition-colors hover:bg-brown/5 hover:text-brown"
+						>
+							<svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</button>
+						<h3 className="mb-4 text-lg font-semibold text-brown">QR code de {customer.name}</h3>
+						<div className="rounded-2xl bg-cream p-6">
+							<QRCodeSVG value={`${window.location.origin}/wallet/${customer.id}`} size={280} fgColor="#1A1008" bgColor="#F0E6D1" level="M" />
+						</div>
+						<p className="mt-3 text-sm text-brown/50">Scannez pour accéder à la carte de fidélité</p>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
