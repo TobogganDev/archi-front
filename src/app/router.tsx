@@ -7,6 +7,8 @@ import { CustomersPage } from "@/pages/customers/ui/CustomersPage";
 import { CustomerDetailPage } from "@/pages/customer-detail/ui/CustomerDetailPage";
 import { ProgramsPage } from "@/pages/programs/ui/ProgramsPage";
 import { ProfilePage } from "@/pages/profile/ui/ProfilePage";
+import { WalletPage } from "@/pages/wallet/ui/WalletPage";
+import { ScanPage } from "@/pages/scan";
 import { Sidebar } from "@/widgets/sidebar";
 
 function ProtectedRoute() {
@@ -40,6 +42,7 @@ function ProtectedRoute() {
 export const router = createBrowserRouter([
 	{ path: "/", element: <LandingPage /> },
 	{ path: "/auth", element: <AuthPage /> },
+	{ path: "/wallet/:customerId", element: <WalletPage /> },
 	{
 		element: <ProtectedRoute />,
 		children: [
@@ -48,6 +51,7 @@ export const router = createBrowserRouter([
 			{ path: "/customers/:id", element: <CustomerDetailPage /> },
 			{ path: "/programs", element: <ProgramsPage /> },
 			{ path: "/settings", element: <ProfilePage /> },
+			{ path: "/scan", element: <ScanPage /> },
 		],
 	},
 ]);

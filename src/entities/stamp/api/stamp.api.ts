@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/api';
-import type { Stamp, StampInsert, StampWithProgram } from '../model/stamp.types';
+import type { Stamp, StampInsert, StampWithProgram, CustomerStampStat } from '../model/stamp.types';
 
 export async function getStampsByCustomer(customerId: string): Promise<StampWithProgram[]> {
   const { data, error } = await supabase
@@ -48,4 +48,33 @@ export async function getActiveStampsCount(customerId: string, programId: string
   if (error) throw new Error(error.message);
 
   return count ?? 0;
+}
+
+export async function getStampStatsByMerchant(merchantId: string): Promise<CustomerStampStat[]> {
+  const { data, error } = await supabase
+    .from('stamps')
+    .select('customer_id, created_at')
+    .eq('merchant_id', merchantId);
+
+  if (error) throw new Error(error.message);
+
+  const statsMap = new Map<string, { count: number; last_visit: string | null }>();
+
+  for (const stamp of data) {
+    const existing = statsMap.get(stamp.customer_id);
+    if (!existing) {
+      statsMap.set(stamp.customer_id, { count: 1, last_visit: stamp.created_at ?? null });
+    } else {
+      existing.count++;
+      if (stamp.created_at && (!existing.last_visit || stamp.created_at > existing.last_visit)) {
+        existing.last_visit = stamp.created_at;
+      }
+    }
+  }
+
+  return Array.from(statsMap.entries()).map(([customer_id, stats]) => ({
+    customer_id,
+    stamp_count: stats.count,
+    last_visit: stats.last_visit,
+  }));
 }
