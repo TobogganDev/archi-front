@@ -1,5 +1,4 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
-import { useAuthContext } from "@/app/providers";
+import { createBrowserRouter } from "react-router-dom";
 import { AuthPage } from "@/pages/auth/ui/AuthPage";
 import { LandingPage } from "@/pages/landing/ui/LandingPage";
 import { DashboardPage } from "@/pages/dashboard/ui/DashboardPage";
@@ -9,42 +8,16 @@ import { ProgramsPage } from "@/pages/programs/ui/ProgramsPage";
 import { ProfilePage } from "@/pages/profile/ui/ProfilePage";
 import { WalletPage } from "@/pages/wallet/ui/WalletPage";
 import { ScanPage } from "@/pages/scan";
-import { Sidebar } from "@/widgets/sidebar";
-
-function ProtectedRoute() {
-	const { isAuthenticated, isLoading } = useAuthContext();
-
-	if (isLoading) {
-		return (
-			<div className="flex min-h-screen items-center justify-center bg-cream">
-				<div className="flex flex-col items-center gap-4">
-					<div className="h-8 w-8 animate-spin rounded-full border-4 border-orange border-t-transparent" />
-					<span className="text-brown/70">Chargement...</span>
-				</div>
-			</div>
-		);
-	}
-
-	if (!isAuthenticated) {
-		return <Navigate to="/auth" replace />;
-	}
-
-	return (
-		<div className="min-h-screen bg-cream">
-			<Sidebar />
-			<main className="ml-64 min-h-screen p-8">
-				<Outlet />
-			</main>
-		</div>
-	);
-}
+import { ErrorPage } from "@/pages/error";
+import { ProtectedRoute } from "@/app/ProtectedRoute";
 
 export const router = createBrowserRouter([
-	{ path: "/", element: <LandingPage /> },
-	{ path: "/auth", element: <AuthPage /> },
-	{ path: "/wallet/:customerId", element: <WalletPage /> },
+	{ path: "/", element: <LandingPage />, errorElement: <ErrorPage /> },
+	{ path: "/auth", element: <AuthPage />, errorElement: <ErrorPage /> },
+	{ path: "/wallet/:customerId", element: <WalletPage />, errorElement: <ErrorPage /> },
 	{
 		element: <ProtectedRoute />,
+		errorElement: <ErrorPage />,
 		children: [
 			{ path: "/dashboard", element: <DashboardPage /> },
 			{ path: "/customers", element: <CustomersPage /> },
@@ -54,4 +27,5 @@ export const router = createBrowserRouter([
 			{ path: "/scan", element: <ScanPage /> },
 		],
 	},
+	{ path: "*", element: <ErrorPage /> },
 ]);
