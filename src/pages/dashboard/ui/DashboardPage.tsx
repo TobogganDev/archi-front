@@ -187,20 +187,28 @@ export function DashboardPage() {
 		<div>
 			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 				<h1 className="text-2xl font-bold text-brown">Dashboard</h1>
-				<div className="inline-flex rounded-lg bg-white p-1 shadow-sm">
-					{([1, 7, 30] as PeriodDays[]).map((days) => (
-						<button
-							key={days}
-							type="button"
-							onClick={() => setPeriodDays(days)}
-							className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${periodDays === days
-								? "bg-orange text-white"
-								: "text-brown/70 hover:bg-cream"
-								}`}
-						>
-							{days === 1 ? "1 jour" : `${days} jours`}
-						</button>
-					))}
+				<div className="flex flex-wrap items-center gap-3">
+					<div className="inline-flex rounded-lg bg-white p-1 shadow-sm">
+						{([1, 7, 30] as PeriodDays[]).map((days) => (
+							<button
+								key={days}
+								type="button"
+								onClick={() => setPeriodDays(days)}
+								className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${periodDays === days
+									? "bg-orange text-white"
+									: "text-brown/70 hover:bg-cream"
+									}`}
+							>
+								{days === 1 ? "1 jour" : `${days} jours`}
+							</button>
+						))}
+					</div>
+					<Link
+						to="/dashboard/progression"
+						className="inline-flex items-center justify-center rounded-md bg-brown px-4 py-2 text-sm font-medium text-cream transition hover:bg-brown/90"
+					>
+						Voir la progression
+					</Link>
 				</div>
 			</div>
 

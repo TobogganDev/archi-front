@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { AuthPage } from "@/pages/auth/ui/AuthPage";
 import { LandingPage } from "@/pages/landing/ui/LandingPage";
 import { DashboardPage } from "@/pages/dashboard/ui/DashboardPage";
+import { ProgressionPage } from "@/pages/progression";
 import { CustomersPage } from "@/pages/customers/ui/CustomersPage";
 import { CustomerDetailPage } from "@/pages/customer-detail/ui/CustomerDetailPage";
 import { ProgramsPage } from "@/pages/programs/ui/ProgramsPage";
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
 		errorElement: <ErrorPage />,
 		children: [
 			{ path: "/dashboard", element: <DashboardPage /> },
+			{ path: "/dashboard/progression", element: <ProgressionPage /> },
 			{ path: "/customers", element: <CustomersPage /> },
 			{ path: "/customers/:id", element: <CustomerDetailPage /> },
 			{ path: "/programs", element: <ProgramsPage /> },
