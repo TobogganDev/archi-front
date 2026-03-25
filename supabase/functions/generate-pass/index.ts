@@ -192,6 +192,7 @@ function buildPassJson(
   merchant: Merchant,
   stampCount: number,
   bundle: CertBundle,
+  walletUrl: string,
 ): string {
   const memberSince = new Date(customer.created_at).toLocaleDateString('fr-FR', {
     month: 'long', year: 'numeric',
@@ -211,6 +212,15 @@ function buildPassJson(
     backgroundColor: 'rgb(59, 42, 26)',
     labelColor:      'rgb(230, 186, 100)',
     logoText:        merchant.name,
+
+    barcodes: [
+      {
+        message:         walletUrl,
+        format:          'PKBarcodeFormatQR',
+        messageEncoding: 'iso-8859-1',
+        altText:         customer.name,
+      },
+    ],
 
     storeCard: {
       headerFields: [
@@ -256,12 +266,13 @@ async function buildPkPass(
   customer: Customer,
   merchant: Merchant,
   stampCount: number,
+  walletUrl: string,
 ): Promise<{ bytes: Uint8Array; testMode: boolean }> {
   const bundle = resolveCertBundle();
 
   const iconBytes    = b64ToBytes(PLACEHOLDER_ICON_B64);
   const passJsonBytes = new TextEncoder().encode(
-    buildPassJson(customer, merchant, stampCount, bundle),
+    buildPassJson(customer, merchant, stampCount, bundle, walletUrl),
   );
 
   // Manifest: SHA-1 of every file except manifest.json and signature
@@ -359,7 +370,8 @@ Deno.serve(async (req: Request) => {
       .eq('customer_id', customerId)
       .eq('redeemed', false);
 
-    const { bytes, testMode } = await buildPkPass(customer, merchant, count ?? 0);
+    const walletUrl = searchParams.get('walletUrl') ?? `${Deno.env.get('SUPABASE_URL')}/wallet/${customerId}`;
+    const { bytes, testMode } = await buildPkPass(customer, merchant, count ?? 0, walletUrl);
 
     // Deno's Response accepts Uint8Array, but the DOM BodyInit type doesn't include it.
     // Casting via ArrayBuffer is the typed-safe workaround.
