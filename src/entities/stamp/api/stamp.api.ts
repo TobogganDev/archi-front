@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/api';
-import type { Stamp, StampInsert, StampWithProgram, StampWithRelations, CustomerStampStat } from '../model/stamp.types';
+import type { CustomerStampStat, Stamp, StampInsert, StampWithProgram, StampWithRelations } from '../model/stamp.types';
 
 export async function getStampsByCustomer(customerId: string): Promise<StampWithProgram[]> {
   const { data, error } = await supabase

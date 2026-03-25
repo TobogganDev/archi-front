@@ -63,7 +63,6 @@ export function CustomerScanner({ onScan, onError }: Props) {
       });
 
     return () => {
-      startedRef.current = false;
       if (scanner.isScanning) {
         scanner.stop().catch(console.error);
       }

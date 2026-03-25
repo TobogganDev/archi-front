@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getStampsByCustomer, getActiveStampsCount, getStampsByMerchant, getStampStatsByMerchant } from '../api/stamp.api';
+import { getActiveStampsCount, getStampsByCustomer, getStampsByMerchant, getStampStatsByMerchant } from '../api/stamp.api';
 
 export function useStampsByCustomer(customerId: string) {
   return useQuery({
