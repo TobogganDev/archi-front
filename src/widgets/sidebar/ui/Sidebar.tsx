@@ -1,7 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "@/app/providers";
 import { useLogout } from "@/features/auth";
 import { Button } from "@/shared/ui/Button";
+import { Link, useLocation } from "react-router-dom";
 
 const NAV_ITEMS = [
 	{
@@ -68,16 +68,17 @@ export function Sidebar() {
 
 			<nav className="flex-1 space-y-1 px-3 py-4">
 				{NAV_ITEMS.map((item) => {
-					const isActive = location.pathname === item.to;
+					const isActive = item.to === "/dashboard"
+						? location.pathname.startsWith("/dashboard")
+						: location.pathname === item.to;
 					return (
 						<Link
 							key={item.to}
 							to={item.to}
-							className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-								isActive
-									? "bg-orange text-white"
-									: "text-cream/70 hover:bg-white/10 hover:text-cream"
-							}`}
+							className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${isActive
+								? "bg-orange text-white"
+								: "text-cream/70 hover:bg-white/10 hover:text-cream"
+								}`}
 						>
 							{item.icon}
 							{item.label}
