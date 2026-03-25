@@ -1,2 +1,2 @@
-export type { Stamp, StampInsert, StampWithProgram } from './model/stamp.types';
-export { useStampsByCustomer, useActiveStampsCount } from './model/useStamps';
+export type { Stamp, StampInsert, StampWithProgram, StampWithRelations } from './model/stamp.types';
+export { useStampsByCustomer, useStampsByMerchant, useActiveStampsCount } from './model/useStamps';

@@ -12,3 +12,11 @@ export interface Stamp {
 export type StampInsert = Omit<Stamp, 'id' | 'created_at'>;
 
 export type StampWithProgram = Stamp & { program: Program };
+
+export type StampWithRelations = Stamp & {
+  customer: {
+    id: string;
+    name: string;
+  };
+  program: Program;
+};
