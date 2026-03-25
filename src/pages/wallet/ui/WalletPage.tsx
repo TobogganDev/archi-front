@@ -1,6 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useCustomerById } from '@/entities/customer';
+import { useStampsByCustomer } from '@/entities/stamp';
+import { usePrograms } from '@/entities/program';
+import { LoyaltyCard } from '@/shared/ui/LoyaltyCard';
 
 function detectPlatform(): 'ios' | 'android' | 'other' {
   const ua = navigator.userAgent;
@@ -12,6 +15,8 @@ function detectPlatform(): 'ios' | 'android' | 'other' {
 export function WalletPage() {
   const { customerId } = useParams<{ customerId: string }>();
   const { data: customer, isLoading, isError } = useCustomerById(customerId ?? '');
+  const { data: stamps = [] } = useStampsByCustomer(customerId ?? '');
+  const { data: programs = [] } = usePrograms(customer?.merchant_id ?? '');
 
   const passUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-pass?customerId=${customerId}`;
   const walletUrl = `${window.location.origin}/wallet/${customerId}`;
@@ -37,43 +42,25 @@ export function WalletPage() {
     );
   }
 
+  const primaryProgram = programs[0];
+  const activeStampsCount = primaryProgram
+    ? stamps.filter((s) => s.program_id === primaryProgram.id && !s.redeemed).length
+    : stamps.filter((s) => !s.redeemed).length;
+  const stampsRequired = primaryProgram?.stamps_required ?? 10;
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-cream px-4 py-12">
       <div className="w-full max-w-sm">
 
-        <div className="mb-8 overflow-hidden rounded-2xl bg-brown p-6 text-cream shadow-xl">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-cream/50">
-                Carte de fidélité
-              </p>
-              <h2 className="mt-1 text-xl font-bold">{customer.name}</h2>
-            </div>
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange font-bold text-lg text-white">
-              {customer.name.charAt(0).toUpperCase()}
-            </div>
-          </div>
-
-          <div className="mt-6 flex gap-2">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-5 w-5 rounded-full border-2 border-cream/30"
-              />
-            ))}
-          </div>
-
-          <div className="mt-5 flex items-end justify-between border-t border-cream/10 pt-4 text-xs">
-            {customer.email && (
-              <span className="truncate text-cream/50">{customer.email}</span>
-            )}
-            <span className="ml-auto shrink-0 text-cream/30">
-              Depuis {new Date(customer.created_at).toLocaleDateString('fr-FR', {
-                month: 'short',
-                year: 'numeric',
-              })}
-            </span>
-          </div>
+        <div className="mb-8">
+          <LoyaltyCard
+            name={customer.name}
+            email={customer.email}
+            createdAt={customer.created_at}
+            stampsRequired={stampsRequired}
+            activeStampsCount={activeStampsCount}
+            programName={primaryProgram?.name}
+          />
         </div>
 
         {platform === 'ios' && (

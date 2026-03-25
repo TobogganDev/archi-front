@@ -5,6 +5,7 @@ import { useStampsByCustomer } from "@/entities/stamp";
 import { usePrograms } from "@/entities/program";
 import type { Program } from "@/entities/program";
 import type { StampWithProgram } from "@/entities/stamp";
+import { LoyaltyCard } from "@/shared/ui/LoyaltyCard";
 
 function ProgramProgress({ program, stamps }: { program: Program; stamps: StampWithProgram[] }) {
 	const activeStamps = stamps.filter((s) => s.program_id === program.id && !s.redeemed);
@@ -102,31 +103,24 @@ export function CustomerDetailPage() {
 			</div>
 
 			<div className="flex flex-col gap-6 lg:flex-row">
-				<div className="flex-1 overflow-hidden rounded-2xl bg-brown p-6 text-cream shadow-xl">
-					<div className="flex items-start justify-between">
-						<div>
-							<p className="text-xs font-medium uppercase tracking-wider text-cream/50">Carte de fidélité</p>
-							<h2 className="mt-1 text-xl font-bold">{customer.name}</h2>
-						</div>
-						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange font-bold text-lg text-white">{customer.name.charAt(0).toUpperCase()}</div>
-					</div>
-
-					<div className="mt-6 flex flex-wrap gap-2">
-						{Array.from({ length: 10 }).map((_, i) => (
-							<div key={i} className={`h-5 w-5 rounded-full border-2 ${i < stamps.filter((s) => !s.redeemed).length ? "border-orange bg-orange" : "border-cream/30"}`} />
-						))}
-					</div>
-
-					<div className="mt-5 flex items-end justify-between border-t border-cream/10 pt-4 text-xs">
-						{customer.email && <span className="truncate text-cream/50">{customer.email}</span>}
-						<span className="ml-auto shrink-0 text-cream/30">
-							Depuis{" "}
-							{new Date(customer.created_at).toLocaleDateString("fr-FR", {
-								month: "short",
-								year: "numeric",
-							})}
-						</span>
-					</div>
+				<div className="flex-1">
+					{(() => {
+						const primaryProgram = programs[0];
+						const activeStampsCount = primaryProgram
+							? stamps.filter((s) => s.program_id === primaryProgram.id && !s.redeemed).length
+							: stamps.filter((s) => !s.redeemed).length;
+						const stampsRequired = primaryProgram?.stamps_required ?? 10;
+						return (
+							<LoyaltyCard
+								name={customer.name}
+								email={customer.email}
+								createdAt={customer.created_at}
+								stampsRequired={stampsRequired}
+								activeStampsCount={activeStampsCount}
+								programName={primaryProgram?.name}
+							/>
+						);
+					})()}
 				</div>
 
 				<div className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-sm">
