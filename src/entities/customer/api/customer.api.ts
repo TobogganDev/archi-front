@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/api';
+import { CustomerSchema, CustomerArraySchema } from '../model/customer.types';
 import type { Customer, CustomerInsert, CustomerUpdate } from '../model/customer.types';
 
 export async function getCustomers(merchantId: string): Promise<Customer[]> {
@@ -9,7 +10,7 @@ export async function getCustomers(merchantId: string): Promise<Customer[]> {
 
   if (error) throw new Error(error.message);
 
-  return data as Customer[];
+  return CustomerArraySchema.parse(data);
 }
 
 export async function getCustomerById(id: string): Promise<Customer> {
@@ -21,7 +22,7 @@ export async function getCustomerById(id: string): Promise<Customer> {
 
   if (error) throw new Error(error.message);
 
-  return data as Customer;
+  return CustomerSchema.parse(data);
 }
 
 export async function createCustomer(data: CustomerInsert): Promise<Customer> {
@@ -33,7 +34,7 @@ export async function createCustomer(data: CustomerInsert): Promise<Customer> {
 
   if (error) throw new Error(error.message);
 
-  return created as Customer;
+  return CustomerSchema.parse(created);
 }
 
 export async function updateCustomer(id: string, data: CustomerUpdate): Promise<Customer> {
@@ -46,7 +47,7 @@ export async function updateCustomer(id: string, data: CustomerUpdate): Promise<
 
   if (error) throw new Error(error.message);
 
-  return updated as Customer;
+  return CustomerSchema.parse(updated);
 }
 
 export async function deleteCustomer(id: string): Promise<void> {

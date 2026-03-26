@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/api';
+import { MerchantSchema } from '../model/merchant.types';
 import type { Merchant, MerchantUpdate } from '../model/merchant.types';
 
 export async function getMerchant(id: string): Promise<Merchant> {
@@ -10,7 +11,7 @@ export async function getMerchant(id: string): Promise<Merchant> {
 
   if (error) throw new Error(error.message);
 
-  return data as Merchant;
+  return MerchantSchema.parse(data);
 }
 
 export async function updateMerchant(id: string, data: MerchantUpdate): Promise<Merchant> {
@@ -23,5 +24,5 @@ export async function updateMerchant(id: string, data: MerchantUpdate): Promise<
 
   if (error) throw new Error(error.message);
 
-  return updated as Merchant;
+  return MerchantSchema.parse(updated);
 }

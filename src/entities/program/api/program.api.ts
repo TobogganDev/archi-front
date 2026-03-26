@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/api';
+import { ProgramSchema, ProgramArraySchema } from '../model/program.types';
 import type { Program, ProgramInsert, ProgramUpdate } from '../model/program.types';
 
 export async function getPrograms(merchantId: string): Promise<Program[]> {
@@ -9,7 +10,7 @@ export async function getPrograms(merchantId: string): Promise<Program[]> {
 
   if (error) throw new Error(error.message);
 
-  return data as Program[];
+  return ProgramArraySchema.parse(data);
 }
 
 export async function getProgramById(id: string): Promise<Program> {
@@ -21,7 +22,7 @@ export async function getProgramById(id: string): Promise<Program> {
 
   if (error) throw new Error(error.message);
 
-  return data as Program;
+  return ProgramSchema.parse(data);
 }
 
 export async function createProgram(data: ProgramInsert): Promise<Program> {
@@ -33,7 +34,7 @@ export async function createProgram(data: ProgramInsert): Promise<Program> {
 
   if (error) throw new Error(error.message);
 
-  return created as Program;
+  return ProgramSchema.parse(created);
 }
 
 export async function updateProgram(id: string, data: ProgramUpdate): Promise<Program> {
@@ -46,7 +47,7 @@ export async function updateProgram(id: string, data: ProgramUpdate): Promise<Pr
 
   if (error) throw new Error(error.message);
 
-  return updated as Program;
+  return ProgramSchema.parse(updated);
 }
 
 export async function deleteProgram(id: string): Promise<void> {
