@@ -177,7 +177,3 @@ npm run preview
 Le fichier `vercel.json` à la racine configure le rewrite `/*` → `/index.html`, ce qui permet à React Router de gérer la navigation côté client sans erreur 404 sur les routes directes.
 
 ---
-
-## Accès au dépôt privé
-
-Si ce dépôt est privé, merci d'inviter le compte GitHub **@punkte** en tant que collaborateur pour permettre l'évaluation du projet.
