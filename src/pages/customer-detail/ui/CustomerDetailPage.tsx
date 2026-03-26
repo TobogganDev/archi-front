@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { useCustomerById } from "@/entities/customer";
 import { useStampsByCustomer } from "@/entities/stamp";
@@ -7,6 +7,7 @@ import { usePrograms } from "@/entities/program";
 import type { Program } from "@/entities/program";
 import type { StampWithProgram } from "@/entities/stamp";
 import { LoyaltyCard } from "@/shared/ui/LoyaltyCard";
+import { useDeleteCustomer } from "@/features/add-customer";
 
 function ProgramProgress({ program, stamps }: { program: Program; stamps: StampWithProgram[] }) {
 	const activeStamps = stamps.filter((s) => s.program_id === program.id && !s.redeemed);
@@ -59,9 +60,18 @@ function ProgramProgress({ program, stamps }: { program: Program; stamps: StampW
 export function CustomerDetailPage() {
 	const [qrModalOpen, setQrModalOpen] = useState(false);
 	const { id } = useParams<{ id: string }>();
+	const navigate = useNavigate();
 	const { data: customer, isLoading: loadingCustomer, isError } = useCustomerById(id ?? "");
 	const { data: stamps = [], isLoading: loadingStamps } = useStampsByCustomer(id ?? "");
 	const { data: programs = [], isLoading: loadingPrograms } = usePrograms(customer?.merchant_id ?? "");
+	const { deleteCustomerAsync, isPending: isDeleting } = useDeleteCustomer();
+
+	const handleDelete = async () => {
+		if (!customer) return;
+		if (!confirm(`Supprimer le client "${customer.name}" ? Cette action est irréversible.`)) return;
+		await deleteCustomerAsync({ id: customer.id, merchantId: customer.merchant_id });
+		navigate("/customers");
+	};
 
 	const isLoading = loadingCustomer || loadingStamps || loadingPrograms;
 
@@ -159,6 +169,23 @@ export function CustomerDetailPage() {
 							<p className="text-sm text-brown/60">Tampons cumulés</p>
 							<p className="font-medium text-brown">{stamps.length}</p>
 						</div>
+					</div>
+					<div className="mt-6 border-t border-brown/10 pt-4">
+						<button
+							type="button"
+							onClick={handleDelete}
+							disabled={isDeleting}
+							className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+						>
+							{isDeleting ? (
+								<span className="h-4 w-4 animate-spin rounded-full border-2 border-red-400 border-t-transparent" />
+							) : (
+								<svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+								</svg>
+							)}
+							Supprimer ce client
+						</button>
 					</div>
 				</div>
 

@@ -1,26 +1,26 @@
 import { useState } from 'react';
 import { useAuthContext } from '@/app/providers/auth-context';
-import { usePrograms, deleteProgram } from '@/entities/program';
+import { usePrograms } from '@/entities/program';
 import type { Program } from '@/entities/program';
-import { CreateProgramModal } from '@/features/create-program';
+import { CreateProgramModal, EditProgramModal, useDeleteProgram } from '@/features/create-program';
 import { Button } from '@/shared/ui/Button';
-import { useQueryClient } from '@tanstack/react-query';
 
 export function ProgramsPage() {
   const { user } = useAuthContext();
   const merchantId = user?.id ?? '';
   const { data: programs, isLoading } = usePrograms(merchantId);
-  const queryClient = useQueryClient();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { deleteProgramAsync, isPending: isDeleting } = useDeleteProgram();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingProgram, setEditingProgram] = useState<Program | null>(null);
 
   const handleDelete = async (program: Program) => {
     if (!confirm(`Supprimer le programme "${program.name}" ?`)) return;
     setDeletingId(program.id);
     try {
-      await deleteProgram(program.id);
-      void queryClient.invalidateQueries({ queryKey: ['programs', merchantId] });
+      await deleteProgramAsync({ id: program.id, merchantId });
     } finally {
       setDeletingId(null);
     }
@@ -30,7 +30,7 @@ export function ProgramsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-brown">Programmes de fidélité</h1>
-        <Button onClick={() => setIsModalOpen(true)}>
+        <Button onClick={() => setIsCreateModalOpen(true)}>
           <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
@@ -50,13 +50,14 @@ export function ProgramsPage() {
             <ProgramCard
               key={program.id}
               program={program}
-              isDeleting={deletingId === program.id}
+              isDeleting={isDeleting && deletingId === program.id}
+              onEdit={setEditingProgram}
               onDelete={handleDelete}
             />
           ))}
 
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsCreateModalOpen(true)}
             className="flex h-48 items-center justify-center rounded-xl border-2 border-dashed border-brown/20 bg-white text-brown/60 transition-colors hover:border-orange hover:text-orange"
           >
             <div className="text-center">
@@ -75,10 +76,18 @@ export function ProgramsPage() {
         </p>
       )}
 
-      {isModalOpen && (
+      {isCreateModalOpen && (
         <CreateProgramModal
           merchantId={merchantId}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
+      )}
+
+      {editingProgram && (
+        <EditProgramModal
+          program={editingProgram}
+          merchantId={merchantId}
+          onClose={() => setEditingProgram(null)}
         />
       )}
     </div>
@@ -89,10 +98,11 @@ export function ProgramsPage() {
 interface ProgramCardProps {
   program: Program;
   isDeleting: boolean;
+  onEdit: (program: Program) => void;
   onDelete: (program: Program) => void;
 }
 
-function ProgramCard({ program, isDeleting, onDelete }: ProgramCardProps) {
+function ProgramCard({ program, isDeleting, onEdit, onDelete }: ProgramCardProps) {
   const filled = Math.min(program.stamps_required, 10);
 
   return (
@@ -126,14 +136,23 @@ function ProgramCard({ program, isDeleting, onDelete }: ProgramCardProps) {
         <p className="text-xs text-brown/40">
           {new Date(program.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
         </p>
-        <Button
-          variant="danger"
-          size="sm"
-          isLoading={isDeleting}
-          onClick={() => onDelete(program)}
-        >
-          Supprimer
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onEdit(program)}
+          >
+            Modifier
+          </Button>
+          <Button
+            variant="danger"
+            size="sm"
+            isLoading={isDeleting}
+            onClick={() => onDelete(program)}
+          >
+            Supprimer
+          </Button>
+        </div>
       </div>
     </div>
   );
