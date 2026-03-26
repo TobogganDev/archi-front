@@ -1,4 +1,10 @@
 import { supabase } from '@/shared/api';
+import {
+  StampSchema,
+  StampWithProgramSchema,
+  StampWithRelationsSchema,
+  StampStatRawSchema,
+} from '../model/stamp.types';
 import type { CustomerStampStat, Stamp, StampInsert, StampWithProgram, StampWithRelations } from '../model/stamp.types';
 
 export async function getStampsByCustomer(customerId: string): Promise<StampWithProgram[]> {
@@ -9,7 +15,7 @@ export async function getStampsByCustomer(customerId: string): Promise<StampWith
 
   if (error) throw new Error(error.message);
 
-  return data as StampWithProgram[];
+  return StampWithProgramSchema.array().parse(data);
 }
 
 export async function getStampsByMerchant(merchantId: string): Promise<StampWithRelations[]> {
@@ -21,7 +27,7 @@ export async function getStampsByMerchant(merchantId: string): Promise<StampWith
 
   if (error) throw new Error(error.message);
 
-  return data as StampWithRelations[];
+  return StampWithRelationsSchema.array().parse(data);
 }
 
 export async function addStamp(data: StampInsert): Promise<Stamp> {
@@ -33,7 +39,7 @@ export async function addStamp(data: StampInsert): Promise<Stamp> {
 
   if (error) throw new Error(error.message);
 
-  return created as Stamp;
+  return StampSchema.parse(created);
 }
 
 export async function redeemStamp(id: string): Promise<Stamp> {
@@ -46,7 +52,7 @@ export async function redeemStamp(id: string): Promise<Stamp> {
 
   if (error) throw new Error(error.message);
 
-  return data as Stamp;
+  return StampSchema.parse(data);
 }
 
 export async function getActiveStampsCount(customerId: string, programId: string): Promise<number> {
@@ -70,9 +76,11 @@ export async function getStampStatsByMerchant(merchantId: string): Promise<Custo
 
   if (error) throw new Error(error.message);
 
+  const stamps = StampStatRawSchema.parse(data);
+
   const statsMap = new Map<string, { count: number; last_visit: string | null }>();
 
-  for (const stamp of data) {
+  for (const stamp of stamps) {
     const existing = statsMap.get(stamp.customer_id);
     if (!existing) {
       statsMap.set(stamp.customer_id, { count: 1, last_visit: stamp.created_at ?? null });
