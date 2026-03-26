@@ -14,7 +14,7 @@ LoyaltyCard est un SaaS de cartes de fidélité numériques destiné aux petits 
 
 ## Lien de production
 
-[À compléter après déploiement]
+[loyaltycard-it079gjdg-toboggandevs-projects.vercel.app](loyaltycard-it079gjdg-toboggandevs-projects.vercel.app)
 
 ---
 
@@ -149,6 +149,32 @@ npm run lint
 # Prévisualiser le build de production
 npm run preview
 ```
+
+---
+
+## Déploiement sur Vercel
+
+### Prérequis
+
+- Un compte [Vercel](https://vercel.com) connecté à votre compte GitHub
+- Les valeurs `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` disponibles dans le dashboard Supabase → **Project Settings → API**
+
+### Étapes
+
+1. **Connecter le dépôt** — depuis le dashboard Vercel, cliquer sur **Add New Project** et importer le dépôt `archi-front`.
+
+2. **Configurer le framework** — Vercel détecte automatiquement Vite. Laisser les réglages par défaut (`npm run build`, dossier de sortie `dist`).
+
+3. **Ajouter les variables d'environnement** — dans l'onglet **Environment Variables** avant de déployer, ajouter :
+
+   | Variable | Valeur |
+   |---|---|
+   | `VITE_SUPABASE_URL` | URL de votre projet Supabase |
+   | `VITE_SUPABASE_ANON_KEY` | Clé publique anon de votre projet Supabase |
+
+4. **Déployer** — cliquer sur **Deploy**. Vercel exécute `npm run build` et publie le contenu du dossier `dist`.
+
+Le fichier `vercel.json` à la racine configure le rewrite `/*` → `/index.html`, ce qui permet à React Router de gérer la navigation côté client sans erreur 404 sur les routes directes.
 
 ---
 
