@@ -14,7 +14,7 @@ LoyaltyCard est un SaaS de cartes de fidélité numériques destiné aux petits 
 
 ## Lien de production
 
-[loyaltycard-it079gjdg-toboggandevs-projects.vercel.app](loyaltycard-it079gjdg-toboggandevs-projects.vercel.app)
+[https://archi-front-ten.vercel.app/](https://archi-front-ten.vercel.app/)
 
 ---
 
