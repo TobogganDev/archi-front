@@ -29,7 +29,7 @@ export function Header() {
 					to="/"
 					className="text-xl font-bold text-brown transition-colors hover:text-orange"
 				>
-					LoyaltyCard
+					Loyalty
 				</Link>
 
 				<nav className="hidden items-center gap-1 md:flex">

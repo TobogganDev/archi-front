@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthContext } from "@/app/providers";
-import { Sidebar } from "@/widgets/sidebar";
+import { Sidebar } from "@/widgets/sidebar/ui/Sidebar";
 
 export function ProtectedRoute() {
 	const { isAuthenticated, isLoading } = useAuthContext();
